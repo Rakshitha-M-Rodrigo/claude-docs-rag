@@ -417,8 +417,12 @@ Instruction: If confidence >= 0.5 and suggested docsets exist, call docs_search 
         return sanitized[:50]
 
     async def run(self):
-        async with stdio_server(self.server) as (read_stream, write_stream):
-            await self.server.run(read_stream, write_stream)
+        async with stdio_server() as (read_stream, write_stream):
+            await self.server.run(
+                read_stream,
+                write_stream,
+                self.server.create_initialization_options(),
+            )
 
 
 def main():

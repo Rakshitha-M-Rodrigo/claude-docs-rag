@@ -40,26 +40,50 @@ Confidence < 0.5?  → Answer from training data (silent)
 
 ### Prerequisites
 - Python 3.9+
-- Claude Code installed (`claude` CLI)
+- Claude Code installed (`claude` CLI on `$PATH`) — see [Claude Code quickstart](https://docs.anthropic.com/en/docs/claude-code/quickstart)
 
-### Step 1: Clone and install
+### One-shot install
 
 ```bash
-git clone https://github.com/Rakshitha-M-Rodrigo/claude-docs-rag.git claude-docs-rag
+git clone https://github.com/Rakshitha-M-Rodrigo/claude-docs-rag.git
 cd claude-docs-rag
-pip install -e .
+./install.sh
 ```
 
-Step 2: Configure Claude Code
-Copy the MCP config:
+That single command:
+
+1. Creates `.venv/` (isolated from system Python).
+2. `pip install -e .` so `python -m docs_rag.server` works from any cwd.
+3. Pre-caches the `all-MiniLM-L6-v2` embedding model (~90 MB) so the first query is fast.
+4. Registers the `docs-rag` MCP server at **user scope** in Claude Code via `claude mcp add` — available in every session.
+5. Health-checks the MCP server (fails loudly if connection isn't `✓ Connected`).
+6. Copies the `docs-search` skill to `~/.claude/skills/docs-search/` so auto-trigger works.
+
+Then **restart Claude Code** so it picks up the new MCP server + skill.
+
+### Useful Make targets
+
 ```bash
-cp claude_mcp_config.json ~/.claude-code-mcp.json
+make install     # same as ./install.sh
+make verify      # health-check the MCP server
+make reinstall   # uninstall + install (preserves your indexed docs)
+make uninstall   # remove MCP registration, venv, and skill (keeps index)
+make clean       # remove .venv and build artefacts only
 ```
 
-Step 3: Install the Skill
+### Custom install knobs
+
 ```bash
-mkdir -p ~/.claude/skills
-cp -r skills/docs-search ~/.claude/skills/
+PYTHON=python3.11 ./install.sh        # pick a specific Python
+DOCS_RAG_DIR=/data/docs ./install.sh  # store the index outside ~/.claude-docs-rag
+./install.sh --no-skill               # MCP only, skip the auto-trigger skill
+```
+
+### Uninstall
+
+```bash
+./uninstall.sh           # removes MCP registration + venv + skill, keeps index
+./uninstall.sh --purge   # also deletes the indexed docs at ~/.claude-docs-rag
 ```
 
 

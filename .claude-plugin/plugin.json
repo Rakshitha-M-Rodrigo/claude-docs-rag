@@ -2,7 +2,8 @@
   "name": "docs-rag",
   "description": "Attach and query any documentation inside Claude Code using hybrid semantic + keyword search with multi-layer caching.",
   "version": "1.0.0",
-  "author": "claude-docs-rag",
-  "skills": ["docs-search"],
-  "mcpServers": ["docs-rag"]
+  "author": {
+    "name": "claude-docs-rag",
+    "url": "https://github.com/Rakshitha-M-Rodrigo/claude-docs-rag"
+  }
 }

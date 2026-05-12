@@ -1,0 +1,21 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+build/
+dist/
+
+# Local docs-rag index (defaults to ~/.claude-docs-rag, but allow override here)
+.claude-docs-rag/
+
+# Editors / OS
+.DS_Store
+.vscode/
+.idea/
