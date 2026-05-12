@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: install uninstall reinstall verify preload preload-append clean help
+.PHONY: install uninstall reinstall verify preload preload-append clean help eval eval-intent eval-retrieval
 
 help:
 	@echo "Targets:"
@@ -10,6 +10,9 @@ help:
 	@echo "  make verify          Re-run MCP health check"
 	@echo "  make preload         Ingest every docset in scripts/docsets.yaml (rebuilds)"
 	@echo "  make preload-append  Same, but append to existing docset chunks"
+	@echo "  make eval            Run intent + retrieval evals (auto-preloads missing docsets)"
+	@echo "  make eval-intent     Run only the intent eval"
+	@echo "  make eval-retrieval  Run only the retrieval eval"
 	@echo "  make clean           Remove .venv and build artefacts (keeps MCP registration)"
 
 install:
@@ -31,6 +34,15 @@ preload:
 
 preload-append:
 	./.venv/bin/python scripts/preload.py --append
+
+eval:
+	./.venv/bin/python -m evals.runners.run_all
+
+eval-intent:
+	./.venv/bin/python -m evals.runners.run_intent
+
+eval-retrieval:
+	./.venv/bin/python -m evals.runners.run_retrieval
 
 clean:
 	rm -rf .venv src/claude_docs_rag.egg-info

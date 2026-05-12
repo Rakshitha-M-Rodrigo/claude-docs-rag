@@ -15,11 +15,15 @@ For each URL, runs the same pipeline as the MCP `docs_index_url` tool:
 fetch → chunk → embed → write to HybridStorage. Continues past per-URL
 errors so one broken page doesn't abort the run. Prints a summary table
 at the end and a warning for any URL that yielded suspiciously few chunks.
+
+The `run_preload` function can also be imported and called directly
+(e.g. by the eval runners to auto-load missing docsets).
 """
 import os
 import sys
 import time
 from pathlib import Path
+from typing import Iterable, Optional
 
 import yaml
 
@@ -39,29 +43,33 @@ def load_config() -> dict:
         return yaml.safe_load(f)
 
 
-def main():
-    argv = sys.argv[1:]
-    append_mode = False
-    if "--append" in argv:
-        append_mode = True
-        argv = [a for a in argv if a != "--append"]
-    selected = set(argv)
+def run_preload(selected: Optional[Iterable[str]] = None, append: bool = False) -> int:
+    """Run the preload pipeline.
+
+    Args:
+        selected: docset names to preload. None or empty = all docsets in docsets.yaml.
+        append: if True, keep existing chunks in selected docsets. If False, rebuild.
+
+    Returns:
+        0 on success, non-zero on per-URL failures (matching CLI exit code).
+    """
     cfg = load_config()
     docsets_cfg = cfg.get("docsets") or {}
 
-    if selected:
-        unknown = selected - set(docsets_cfg.keys())
+    selected_set = set(selected) if selected else set()
+    if selected_set:
+        unknown = selected_set - set(docsets_cfg.keys())
         if unknown:
             print(f"Unknown docsets: {sorted(unknown)}", file=sys.stderr)
             print(f"Available: {sorted(docsets_cfg.keys())}", file=sys.stderr)
-            sys.exit(2)
-        docsets_cfg = {k: v for k, v in docsets_cfg.items() if k in selected}
+            return 2
+        docsets_cfg = {k: v for k, v in docsets_cfg.items() if k in selected_set}
 
     persist_dir = os.environ.get("DOCS_RAG_DIR", os.path.expanduser("~/.claude-docs-rag"))
     os.makedirs(persist_dir, exist_ok=True)
     print(f"persist_dir={persist_dir}")
     print(f"docsets:    {list(docsets_cfg.keys())}")
-    print(f"mode:       {'append (keep existing chunks)' if append_mode else 'rebuild (delete existing chunks first)'}")
+    print(f"mode:       {'append (keep existing chunks)' if append else 'rebuild (delete existing chunks first)'}")
     print()
 
     scraper = DocScraper()
@@ -82,7 +90,7 @@ def main():
             continue
 
         print(f"\n=== {docset_name} ({len(urls)} URLs) ===")
-        if not append_mode and docset_name in storage.list_docsets():
+        if not append and docset_name in storage.list_docsets():
             print(f"  (rebuilding: deleting existing '{docset_name}' docset)")
             storage.delete_docset(docset_name)
         ds = storage.get_or_create_docset(docset_name)
@@ -137,7 +145,19 @@ def main():
         print("\nFailures:")
         for d, u, s in failed:
             print(f"  [{d}] {u}\n      {s}")
-        sys.exit(1)
+        return 1
+    return 0
+
+
+def main():
+    argv = sys.argv[1:]
+    append_mode = False
+    if "--append" in argv:
+        append_mode = True
+        argv = [a for a in argv if a != "--append"]
+    rc = run_preload(selected=argv or None, append=append_mode)
+    if rc != 0:
+        sys.exit(rc)
 
 
 if __name__ == "__main__":
