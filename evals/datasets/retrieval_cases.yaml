@@ -1,0 +1,126 @@
+# Labeled queries for the retriever (docs_search).
+#
+# Schema (per case):
+#   query:                       the user query
+#   expected_docset:             the docset the right chunk lives in
+#   expected_source_substring:   substring that MUST appear in the result's
+#                                `source` URL (case-insensitive). Use the
+#                                distinguishing path fragment of the canonical
+#                                page (e.g. "asyncio-task", not the full URL).
+#   expected_keywords:           at least one MUST appear (case-insensitive) in
+#                                the result's `text`. Choose 2-4 keywords that
+#                                are highly specific to the answer chunk.
+#
+# A result hits when BOTH the source substring AND ≥1 keyword match.
+# This avoids two failure modes: source-only matching (any chunk from the
+# right page passes) and keyword-only matching (incidental keyword presence).
+#
+# Cases are grounded in URLs from scripts/docsets.yaml.
+
+cases:
+
+  # ───────── Python ─────────
+  - query: "how does asyncio.gather handle exceptions from coroutines"
+    expected_docset: python
+    expected_source_substring: "asyncio-task"
+    expected_keywords: ["gather", "return_exceptions", "exception"]
+
+  - query: "what is typing.Optional"
+    expected_docset: python
+    expected_source_substring: "library/typing"
+    expected_keywords: ["Optional", "None", "Union"]
+
+  - query: "list comprehension syntax python"
+    expected_docset: python
+    expected_source_substring: "tutorial/datastructures"
+    expected_keywords: ["comprehension", "list", "for"]
+
+  - query: "how do I define a class with __init__ in python"
+    expected_docset: python
+    expected_source_substring: "tutorial/classes"
+    expected_keywords: ["__init__", "class", "instance"]
+
+  # ───────── JavaScript ─────────
+  - query: "Array.prototype.map callback signature"
+    expected_docset: javascript
+    expected_source_substring: "Global_Objects/Array"
+    expected_keywords: ["map", "callback", "callbackfn"]
+
+  - query: "Promise.all behaviour when one promise rejects"
+    expected_docset: javascript
+    expected_source_substring: "Global_Objects/Promise"
+    expected_keywords: ["all", "reject", "fulfilled"]
+
+  - query: "what does async function declaration return"
+    expected_docset: javascript
+    expected_source_substring: "async_function"
+    expected_keywords: ["async", "Promise", "await"]
+
+  - query: "Map vs Object in JavaScript"
+    expected_docset: javascript
+    expected_source_substring: "Global_Objects/Map"
+    expected_keywords: ["Map", "key", "iteration"]
+
+  # ───────── HTML ─────────
+  - query: "html input type attribute values"
+    expected_docset: html
+    expected_source_substring: "HTML/Element/input"
+    expected_keywords: ["type", "input", "email"]
+
+  - query: "html form method attribute GET POST"
+    expected_docset: html
+    expected_source_substring: "HTML/Element/form"
+    expected_keywords: ["method", "form", "post"]
+
+  - query: "html data-* custom attribute"
+    expected_docset: html
+    expected_source_substring: "Global_attributes"
+    expected_keywords: ["data-", "attribute", "custom"]
+
+  # ───────── Java ─────────
+  - query: "java Optional ifPresent usage"
+    expected_docset: java
+    expected_source_substring: "Optional"
+    expected_keywords: ["ifPresent", "Optional", "Consumer"]
+
+  - query: "java Stream collect to list"
+    expected_docset: java
+    expected_source_substring: "stream/Stream"
+    expected_keywords: ["collect", "Collector", "toList"]
+
+  - query: "java CompletableFuture thenCompose vs thenApply"
+    expected_docset: java
+    expected_source_substring: "CompletableFuture"
+    expected_keywords: ["thenCompose", "thenApply", "CompletionStage"]
+
+  # ───────── Swift ─────────
+  - query: "swift trailing closure syntax"
+    expected_docset: swift
+    expected_source_substring: "Closures"
+    expected_keywords: ["trailing", "closure", "function"]
+
+  - query: "swift nil-coalescing operator ??"
+    expected_docset: swift
+    expected_source_substring: "OptionalChaining"
+    expected_keywords: ["optional", "nil", "chaining"]
+
+  - query: "swift async await concurrency"
+    expected_docset: swift
+    expected_source_substring: "Concurrency"
+    expected_keywords: ["async", "await", "Task"]
+
+  # ───────── PHP ─────────
+  - query: "php preg_match return value"
+    expected_docset: php
+    expected_source_substring: "function.preg-match"
+    expected_keywords: ["preg_match", "matches", "return"]
+
+  - query: "php array_map callback multiple arrays"
+    expected_docset: php
+    expected_source_substring: "function.array-map"
+    expected_keywords: ["array_map", "callback", "array"]
+
+  - query: "php foreach loop syntax"
+    expected_docset: php
+    expected_source_substring: "control-structures.foreach"
+    expected_keywords: ["foreach", "as", "array"]

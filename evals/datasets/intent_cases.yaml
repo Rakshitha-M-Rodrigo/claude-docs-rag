@@ -1,0 +1,125 @@
+# Labeled queries for the intent detector (docs_analyze_query).
+#
+# Schema (per case):
+#   query:            the user query as Claude would receive it
+#   needs_docs:       true if documentation lookup should fire, false otherwise
+#   expected_docset:  (optional) for positives, which shipped docset should be top-1
+#                     suggestion. Omit when the case is positive but ambiguous
+#                     (any reasonable docset is acceptable).
+#
+# Coverage target: ~20 positives (across all 6 shipped docsets) + ~10 negatives.
+
+cases:
+
+  # ───────── Positives: Python ─────────
+  - query: "how does asyncio.gather propagate exceptions"
+    needs_docs: true
+    expected_docset: python
+
+  - query: "what does typing.Optional mean in Python type hints"
+    needs_docs: true
+    expected_docset: python
+
+  - query: "difference between list.sort and sorted() in Python"
+    needs_docs: true
+    expected_docset: python
+
+  - query: "Python TypeError: unhashable type: 'list'"
+    needs_docs: true
+    expected_docset: python
+
+  # ───────── Positives: JavaScript ─────────
+  - query: "Array.prototype.map vs forEach in JavaScript"
+    needs_docs: true
+    expected_docset: javascript
+
+  - query: "how does Promise.allSettled differ from Promise.all"
+    needs_docs: true
+    expected_docset: javascript
+
+  - query: "what does async function return in JavaScript"
+    needs_docs: true
+    expected_docset: javascript
+
+  # ───────── Positives: HTML ─────────
+  - query: "html input type=email validation attributes"
+    needs_docs: true
+    expected_docset: html
+
+  - query: "what are HTML global attributes like data-* and aria-*"
+    needs_docs: true
+    expected_docset: html
+
+  # ───────── Positives: Java ─────────
+  - query: "java.util.Optional ifPresent vs ifPresentOrElse"
+    needs_docs: true
+    expected_docset: java
+
+  - query: "how to use CompletableFuture.thenCompose in Java 21"
+    needs_docs: true
+    expected_docset: java
+
+  # ───────── Positives: Swift ─────────
+  - query: "swift optional chaining nil-coalescing operator"
+    needs_docs: true
+    expected_docset: swift
+
+  - query: "how do trailing closures work in Swift"
+    needs_docs: true
+    expected_docset: swift
+
+  # ───────── Positives: PHP ─────────
+  - query: "php preg_match return value and capturing groups"
+    needs_docs: true
+    expected_docset: php
+
+  - query: "array_map with multiple arrays in PHP"
+    needs_docs: true
+    expected_docset: php
+
+  # ───────── Positives: ambiguous (no expected_docset) ─────────
+  - query: "how do I sort a list of dictionaries by a key"
+    needs_docs: true
+
+  - query: "what is the difference between a Map and a HashMap"
+    needs_docs: true
+
+  - query: "Error: Cannot read properties of undefined (reading 'map')"
+    needs_docs: true
+
+  - query: "how do I deploy a containerised app with Docker"
+    needs_docs: true
+
+  - query: "explain memoization with useMemo in React"
+    needs_docs: true
+
+  # ───────── Negatives: general chat / non-technical ─────────
+  - query: "hi"
+    needs_docs: false
+
+  - query: "thanks, that was super helpful"
+    needs_docs: false
+
+  - query: "good morning, ready to start?"
+    needs_docs: false
+
+  - query: "ok"
+    needs_docs: false
+
+  - query: "what should I have for lunch today"
+    needs_docs: false
+
+  - query: "tell me a joke"
+    needs_docs: false
+
+  - query: "summarise the meeting notes I just pasted"
+    needs_docs: false
+
+  - query: "rename the variable foo to bar in this file"
+    needs_docs: false
+
+  - query: "write a haiku about debugging"
+    needs_docs: false
+
+  - query: "great, let's move on"
+    needs_docs: false

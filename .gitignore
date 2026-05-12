@@ -22,3 +22,7 @@ dist/
 
 # Claude Code local (per-user) settings
 .claude/settings.local.json
+
+# Eval run artifacts (keep evals/results/.gitkeep)
+evals/results/*
+!evals/results/.gitkeep
