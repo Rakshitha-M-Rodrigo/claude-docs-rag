@@ -15,6 +15,7 @@ setup(
         "markdownify>=0.11.6",
         "numpy>=1.24.0",
         "tiktoken>=0.5.0",
+        "PyYAML>=6.0",
     ],
     entry_points={
         "console_scripts": [

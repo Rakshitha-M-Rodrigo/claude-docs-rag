@@ -22,7 +22,8 @@
       "WebSearch",
       "Bash(chmod +x /Users/rakshitharodrigo/Projects/_MyProjects/testing_doc_rags/claude-docs-rag/install.sh /Users/rakshitharodrigo/Projects/_MyProjects/testing_doc_rags/claude-docs-rag/uninstall.sh)",
       "Bash(./install.sh *)",
-      "Bash(make verify *)"
+      "Bash(make verify *)",
+      "Bash(make help *)"
     ]
   }
 }

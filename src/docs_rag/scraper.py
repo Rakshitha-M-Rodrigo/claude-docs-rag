@@ -38,12 +38,33 @@ class DocScraper:
         for tag in soup(["script", "style", "nav", "footer", "header"]):
             tag.decompose()
         
-        # Try to find main content area
-        main = soup.find("main") or soup.find("article") or soup.find("div", class_=re.compile("content|main|doc"))
-        if main:
-            html = str(main)
+        # Try to find main content area. Pick the largest candidate so that
+        # pages with small auxiliary `class="..content.."` divs (e.g. php.net's
+        # `cmd_content`) don't trick us into extracting a nav blurb.
+        candidates = []
+        for cand in [
+            soup.find("main"),
+            soup.find("article"),
+            *soup.find_all("div", class_=re.compile("content|main|doc")),
+        ]:
+            if cand is not None:
+                candidates.append(cand)
+
+        body = soup.find("body") or soup
+        if candidates:
+            best = max(candidates, key=lambda t: len(t.get_text(strip=True)))
+            best_len = len(best.get_text(strip=True))
+            body_len = len(body.get_text(strip=True))
+            # Only use the matched container if it's both reasonably large AND
+            # captures a meaningful share of the body text. PHP's manual, for
+            # example, has many small <div class="example-contents"> code blocks
+            # that match the regex but cover <5% of the actual content.
+            if best_len >= 500 and best_len * 4 >= body_len:
+                html = str(best)
+            else:
+                html = str(body)
         else:
-            html = str(soup.find("body") or soup)
+            html = str(body)
         
         markdown = md(html, heading_style="ATX")
         return self._clean_markdown(markdown)

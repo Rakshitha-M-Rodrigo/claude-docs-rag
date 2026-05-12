@@ -86,6 +86,42 @@ DOCS_RAG_DIR=/data/docs ./install.sh  # store the index outside ~/.claude-docs-r
 ./uninstall.sh --purge   # also deletes the indexed docs at ~/.claude-docs-rag
 ```
 
+---
+
+## Preloading documentation
+
+Skip ad-hoc indexing — `scripts/docsets.yaml` defines curated reference URLs
+per language/framework. Run once after install:
+
+```bash
+make preload                                   # ingest every docset in the yaml
+.venv/bin/python scripts/preload.py python php # subset
+.venv/bin/python scripts/preload.py --append   # add to existing chunks
+```
+
+Default behavior is **rebuild per docset**: each docset listed in the yaml is
+deleted and re-ingested. Docsets not listed (e.g. one-off docsets indexed via
+the MCP tool) are left untouched.
+
+### Shipped docsets
+
+| Docset | Source | Notes |
+|---|---|---|
+| `python` | docs.python.org/3 | functions, stdtypes, asyncio, typing, tutorial |
+| `javascript` | MDN | Array, Object, Promise, Map, async, operators |
+| `html` | MDN | form, input, table, select, global attributes |
+| `java` | Oracle javadocs (JDK 21) | String, List, Map, Optional, Stream, CompletableFuture |
+| `swift` | swift-book GitHub raw markdown | basics, control flow, functions, closures, concurrency |
+| `php` | php.net manual | function refs (strpos, array_map, preg_match) and language refs |
+
+### Adding your own docsets
+
+Edit `scripts/docsets.yaml`. Pick **concrete reference / function pages**
+(not chapter landing pages), and prefer **server-rendered** sites. The
+current scraper has no JS engine, so SPAs like developer.android.com,
+developer.apple.com, and docs.swift.org's DocC site return empty shells —
+use upstream markdown sources (e.g. swift-book on GitHub) instead.
+
 
 
 ## Available MCP Tools
