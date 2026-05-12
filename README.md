@@ -22,6 +22,7 @@ A production-grade documentation attachment system for **Claude Code**, inspired
 ---
 
 ## Architecture
+```
 User Query
 ↓
 [docs_analyze_query] — Intent Detection Layer
@@ -30,6 +31,7 @@ Confidence >= 0.5? → [docs_search] → Retrieved Chunks → Cited Answer
 Confidence < 0.5?  → Answer from training data (silent)
 ↓
 [Decision Tracer] — Logs every choice to ~/.claude-docs-rag/logs/
+```
 
 
 ---
