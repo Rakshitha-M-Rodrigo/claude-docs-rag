@@ -43,7 +43,7 @@ Confidence < 0.5?  → Answer from training data (silent)
 ### Step 1: Clone and install
 
 ```bash
-git clone <this-repo> claude-docs-rag
+git clone https://github.com/Rakshitha-M-Rodrigo/claude-docs-rag.git claude-docs-rag
 cd claude-docs-rag
 pip install -e .
 ```
