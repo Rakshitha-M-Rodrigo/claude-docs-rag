@@ -1,4 +1,9 @@
-mcp>=1.0.0
+# mcp 2.x renamed/removed the v1 low-level server API this code uses
+# (src/docs_rag/server.py: `from mcp.server import Server` + @server.list_tools()).
+# The <2 upper bound is load-bearing: without it a fresh install resolves 2.x and the
+# server dies at startup with AttributeError: 'Server' object has no attribute
+# 'list_tools'. Keep this in sync with setup.py install_requires (D-0001).
+mcp>=1.28,<2
 chromadb>=0.4.0
 sentence-transformers>=2.2.0
 rank-bm25>=0.2.2
