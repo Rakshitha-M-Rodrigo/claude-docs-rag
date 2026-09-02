@@ -6,7 +6,9 @@ setup(
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     install_requires=[
-        "mcp>=1.0.0",
+        # <2 is load-bearing — mcp 2.x drops the v1 low-level Server API (D-0001).
+        # Keep in sync with requirements.txt.
+        "mcp>=1.28,<2",
         "chromadb>=0.4.22",
         "sentence-transformers>=2.2.2",
         "rank-bm25>=0.2.2",
